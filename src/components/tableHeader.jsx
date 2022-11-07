@@ -1,13 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
-import _ from "lodash";
 
 const TableHeader = ({ onSort, selectedSort, columns }) => {
-    const getClass = () => {
-        return selectedSort.order === "asc"
-            ? "bi bi-caret-down-fill"
-            : "bi bi-caret-up-fill";
-    };
     const handleSort = (item) => {
         if (selectedSort.path === item) {
             onSort({
@@ -19,17 +13,23 @@ const TableHeader = ({ onSort, selectedSort, columns }) => {
         }
     };
 
+    const renderSortArror = (selectedSort, currentPath) => {
+        if (selectedSort.path && selectedSort.path === currentPath) {
+            if (selectedSort.order === "asc") {
+                return <i className="bi bi-caret-down-fill"></i>;
+            } else {
+                return <i className="bi bi-caret-up-fill"></i>;
+            }
+        }
+        return null;
+    };
+
     return (
         <thead>
             <tr>
                 {Object.keys(columns).map((column) => (
                     <th
                         key={column}
-                        className={
-                            columns[column].path && _.isEqual(columns[column].path, selectedSort.path)
-                                ? getClass()
-                                : ""
-                        }
                         onClick={
                             columns[column].path
                                 ? () => handleSort(columns[column].path)
@@ -38,7 +38,8 @@ const TableHeader = ({ onSort, selectedSort, columns }) => {
                         {...{ role: columns[column].path && "button" }}
                         scope="col"
                     >
-                        {columns[column].name}
+                        {columns[column].name}{" "}
+                        {renderSortArror(selectedSort, columns[column].path)}
                     </th>
                 ))}
             </tr>

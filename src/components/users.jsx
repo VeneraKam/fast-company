@@ -8,14 +8,19 @@ import api from "../api";
 import SearchStatus from "./searchStatus";
 import _ from "lodash";
 import UserTable from "./usersTable";
+import User from "./user";
+import { useParams, useHistory } from "react-router-dom";
 
 const Users = () => {
+    const params = useParams();
     const [currentPage, setCurrentPage] = useState(1);
     const [professions, setProfessions] = useState();
     const [selectedProf, setSelectedProf] = useState();
     const pageSize = 8;
     const [sortBy, setSortBy] = useState({ iter: "name", order: "asc" });
     const [users, setUsers] = useState();
+    const { userId } = params;
+    const history = useHistory();
 
     useEffect(() => {
         api.users.fetchAll().then((data) => setUsers(data));
@@ -75,7 +80,16 @@ const Users = () => {
             setSelectedProf();
         };
 
-        return (
+        const getUser = (userId) => users.find(({ _id }) => _id === userId);
+        const user = getUser(userId);
+
+        const handleMoveToUsers = (hasPost) => {
+            hasPost ? history.push("/users") : history.replace("/users");
+        };
+
+        return userId ? (
+            <User user={user} goToUsers={handleMoveToUsers} />
+        ) : (
             <div className="d-flex">
                 {professions && (
                     <div className="d-flex flex-column flex-shrink-0 p-3">

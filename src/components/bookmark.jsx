@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
-const Bookmark = () => {
-  const [active, setActive] = useState(false);
+const Bookmark = ({ bookmark }) => {
+  const [active, setActive] = useState(bookmark);
 
   const handleChoose = (active) => {
     setActive(!active);

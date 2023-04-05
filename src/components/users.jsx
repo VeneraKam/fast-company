@@ -3,9 +3,19 @@ import api from "../api";
 import "bootstrap/dist/css/bootstrap.css";
 import SearchStatus from "./searchStatus";
 import User from "./user";
+import Pagination from "./pagination";
+import { paginate } from "../utils/paginate";
 
 const Users = () => {
   const [users, setUsers] = useState(api.users.fetchAll());
+  const count = users.length;
+  const pageSize = 4;
+  const [currentPage, setCurrentPage] = useState(1);
+  const userCrop = paginate(users, currentPage, pageSize);
+
+  const handlePageChange = (pageIndex) => {
+    setCurrentPage(pageIndex);
+  };
 
   const handleDelete = (userId) => {
     const updatedUsers = users.filter((user) => {
@@ -16,8 +26,8 @@ const Users = () => {
 
   return (
     <>
-      <SearchStatus length={users.length} />
-      {users.length !== 0 && (
+      <SearchStatus length={count} />
+      {count > 0 && (
         <table className="table table-hover">
           <thead>
             <tr>
@@ -31,12 +41,18 @@ const Users = () => {
             </tr>
           </thead>
           <tbody>
-            {users.map((user) => (
+            {userCrop.map((user) => (
               <User key={user._id} user={user} onDelete={handleDelete} />
             ))}
           </tbody>
         </table>
       )}
+      <Pagination
+        itemCount={count}
+        pageSize={pageSize}
+        currentPage={currentPage}
+        onPageChange={handlePageChange}
+      />
     </>
   );
 };

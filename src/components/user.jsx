@@ -29,7 +29,7 @@ const User = ({ user, onDelete }) => {
 
 User.propTypes = {
   user: PropTypes.object.isRequired,
-  onDelete: PropTypes.func.isRequired,
+  onDelete: PropTypes.func.isRequired
 };
 
 export default User;

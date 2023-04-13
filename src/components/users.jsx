@@ -1,60 +1,96 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import PropTypes from "prop-types";
+import { paginate } from "../utils/paginate";
+import Pagination from "./pagination";
+import User from "./user";
 import api from "../api";
 import "bootstrap/dist/css/bootstrap.css";
+import GroupList from "./groupList";
 import SearchStatus from "./searchStatus";
-import User from "./user";
-import Pagination from "./pagination";
-import { paginate } from "../utils/paginate";
 
-const Users = () => {
-  const [users, setUsers] = useState(api.users.fetchAll());
-  const count = users.length;
-  const pageSize = 4;
+const Users = ({ users: allUsers, ...rest }) => {
   const [currentPage, setCurrentPage] = useState(1);
-  const userCrop = paginate(users, currentPage, pageSize);
+  const pageSize = 4;
+  const [professions, setProfessions] = useState();
+  const [selectedProf, setSelectedProf] = useState();
 
   const handlePageChange = (pageIndex) => {
     setCurrentPage(pageIndex);
   };
 
-  const handleDelete = (userId) => {
-    const updatedUsers = users.filter((user) => {
-      return user._id !== userId;
-    });
-    setUsers(updatedUsers);
+  useEffect(() => {
+    api.professions.fetchAll().then((data) => setProfessions(data));
+  }, []);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedProf]);
+
+  const filteredUsers = selectedProf
+    ? allUsers.filter((user) => user.profession._id === selectedProf._id)
+    : allUsers;
+  const count = filteredUsers.length;
+  const userCrop = paginate(filteredUsers, currentPage, pageSize);
+
+  const handleProfessionSelect = (items) => {
+    setSelectedProf(items);
+  };
+
+  const clearFilter = () => {
+    setSelectedProf();
   };
 
   return (
-    <>
-      <SearchStatus length={count} />
-      {count > 0 && (
-        <table className="table table-hover">
-          <thead>
-            <tr>
-              <th scope="col">Имя</th>
-              <th scope="col">Качество</th>
-              <th scope="col">Профессия</th>
-              <th scope="col">Встретился, раз</th>
-              <th scope="col">Оценка</th>
-              <th scope="col">Избранное</th>
-              <th scope="col"></th>
-            </tr>
-          </thead>
-          <tbody>
-            {userCrop.map((user) => (
-              <User key={user._id} user={user} onDelete={handleDelete} />
-            ))}
-          </tbody>
-        </table>
+    <div className="d-flex">
+      {professions && (
+        <div className="d-flex flex-column flex-shrink-0 p-3">
+          <GroupList
+            items={professions}
+            selectedItem={selectedProf}
+            onItemSelect={handleProfessionSelect}
+          />
+          <button className="btn btn-secondary mt-2" onClick={clearFilter}>
+            Очистить
+          </button>
+        </div>
       )}
-      <Pagination
-        itemCount={count}
-        pageSize={pageSize}
-        currentPage={currentPage}
-        onPageChange={handlePageChange}
-      />
-    </>
+      <div className="d-flex flex-column">
+        <SearchStatus length={count} />
+        {count > 0 && (
+          <table className="table table-hover">
+            <thead>
+              <tr>
+                <th scope="col">Имя</th>
+                <th scope="col">Качество</th>
+                <th scope="col">Профессия</th>
+                <th scope="col">Встретился, раз</th>
+                <th scope="col">Оценка</th>
+                <th scope="col">Избранное</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <tbody>
+              {userCrop.map((user) => (
+                <User key={user._id} user={user} {...rest} />
+              ))}
+            </tbody>
+          </table>
+        )}
+        <div className="d-flex justify-content-center">
+          <Pagination
+            itemCount={count}
+            pageSize={pageSize}
+            currentPage={currentPage}
+            onPageChange={handlePageChange}
+          />
+        </div>
+      </div>
+    </div>
   );
+};
+
+Users.propTypes = {
+  users: PropTypes.array,
 };
 
 export default Users;

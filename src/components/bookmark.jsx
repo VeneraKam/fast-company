@@ -1,27 +1,21 @@
-import React, { useState } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 
-const Bookmark = ({ bookmark }) => {
-  const [active, setActive] = useState(bookmark);
-
-  const handleToggle = (active) => {
-    setActive(!active);
-  };
-
+const Bookmark = ({ status, ...rest }) => {
   return (
     <>
       {
-        <i
-          className={"bi bi-bookmark-check" + (active ? "-fill" : "")}
-          onClick={() => handleToggle(active)}
-        />
+        <button {...rest}>
+          {" "}
+          <i className={"bi bi-bookmark-check" + (status ? "-fill" : "")} />
+        </button>
       }
     </>
   );
 };
 
 Bookmark.propTypes = {
-  bookmark: PropTypes.bool.isRequired,
+  status: PropTypes.bool.isRequired,
 };
 
 export default Bookmark;

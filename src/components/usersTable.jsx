@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import Bookmark from "./bookmark";
-import QualtiesList from "./qualitiesList";
+import QualitiesList from "./qualitiesList";
 import Table from "./table";
 
 const UsersTable = ({
@@ -13,12 +13,13 @@ const UsersTable = ({
   ...rest
 }) => {
   const columns = {
-    name: { path: "name", name: "Имя" },
+    name: {
+      path: "name",
+      name: "Имя",
+    },
     qualities: {
       name: "Качество",
-      component: (user) => (
-        <QualtiesList qualities={user.qualities}></QualtiesList>
-      ),
+      component: (user) => <QualitiesList qualities={user.qualities} />,
     },
     professions: { path: "profession.name", name: "Качество" },
     completeMeetings: { path: "completedMeetings", name: "Встретился, раз" },

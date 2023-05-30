@@ -10,9 +10,10 @@ function App() {
     <>
       <NavBar />
       <Switch>
-        <Route exact path="/" component={Main}></Route>
-        <Route path="/login" component={Login}></Route>
-        <Route path="/users/:userId?" component={Users}></Route>
+        <Route path="/login" component={Login} />
+        <Route path="/users/:userId?" component={Users} />
+        <Route exact path="/" component={Main} />
+        <Route path="/" />
       </Switch>
     </>
   );

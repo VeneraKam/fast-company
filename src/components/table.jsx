@@ -5,14 +5,16 @@ import TableHeader from "./tableHeader";
 
 const Table = ({ selectedSort, onSort, columns, data, children }) => {
   return (
-    <table className="table table-hover">
-      {children || (
-        <>
-          <TableHeader {...{ selectedSort, onSort, columns }} />
-          <TableBody {...{ columns, data }} />
-        </>
-      )}
-    </table>
+    <>
+      <table className="table table-hover">
+        {children || (
+          <>
+            <TableHeader {...{ selectedSort, onSort, columns }} />
+            <TableBody {...{ columns, data }} />
+          </>
+        )}
+      </table>
+    </>
   );
 };
 

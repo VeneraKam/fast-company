@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import { paginate } from "../utils/paginate";
-import Pagination from "./pagination";
-import UsersTable from "./usersTable";
-import api from "../api";
+import { paginate } from "../../../utils/paginate";
+import Pagination from "../../common/pagination";
+import UsersTable from "../../common/ui/usersTable";
+import api from "../../../api";
 import "bootstrap/dist/css/bootstrap.css";
-import GroupList from "./groupList";
-import SearchStatus from "./searchStatus";
-import SearchUsers from "./searchUsers";
+import GroupList from "../../common/groupList";
+import SearchStatus from "../../common/ui/searchStatus";
+import SearchUsers from "../../common/ui/searchUsers";
 import _ from "lodash";
 
-const UsersList = ({ match }) => {
+const UsersListPage = ({ match }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 4;
   const [professions, setProfessions] = useState();
@@ -48,7 +48,7 @@ const UsersList = ({ match }) => {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [selectedProf]);
+  }, [selectedProf, searchUsers]);
 
   if (users.length > 0) {
     let filteredUsers;
@@ -135,9 +135,9 @@ const UsersList = ({ match }) => {
   return "Loading...";
 };
 
-UsersList.propTypes = {
+UsersListPage.propTypes = {
   users: PropTypes.array,
   match: PropTypes.object,
 };
 
-export default UsersList;
+export default UsersListPage;

@@ -1,5 +1,5 @@
-module.export = {
-  trallingComma: "none",
-  tabWidth: 2,
-  semi: true,
+module.exports = {
+    trailingComma: "none",
+    tabWidth: 4,
+    semi: true
 };

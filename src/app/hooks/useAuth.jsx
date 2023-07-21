@@ -100,13 +100,14 @@ const AuthProvider = ({ children }) => {
     async function createUser(data) {
         try {
             const { content } = await userService.create(data);
-            console.log(content);
+            // console.log(content);
             setUser(content);
         } catch (error) {
             errorCatcher(error);
         }
     }
     async function update(data) {
+        console.log("update", data);
         try {
             const { content } = await userService.update(data);
             console.log(content);
@@ -114,38 +115,7 @@ const AuthProvider = ({ children }) => {
         } catch (error) {
             errorCatcher(error);
         }
-    }
-
-    async function updateUser({ _id, name, ...rest }) {
-        try {
-            const { data } = await httpAuth.post(`accounts:update`, {
-                idToken: _id,
-                displayName: name,
-                photoUrl: `https://avatars.dicebear.com/api/avataaars/${(
-                    Math.random() + 1
-                )
-                    .toString(36)
-                    .substring(7)}.svg`,
-                deleteAttribute: [],
-                returnSecureToken: true
-            });
-            setTokens(data);
-            await update({
-                ...rest
-            });
-        } catch (error) {
-            errorCatcher(error);
-            const { code, message } = error.response.data.error;
-            console.log("updateAuth", code, message);
-            if (code === 400) {
-                if (message === "EMAIL_EXISTS") {
-                    const errorObject = {
-                        email: "Пользователь с таким Email уже существует"
-                    };
-                    throw errorObject;
-                }
-            }
-        }
+        console.log("updateAuth", currentUser);
     }
 
     function errorCatcher(error) {
@@ -177,7 +147,7 @@ const AuthProvider = ({ children }) => {
     }, [error]);
     return (
         <AuthContext.Provider
-            value={{ signUp, logIn, currentUser, logOut, updateUser }}
+            value={{ signUp, logIn, currentUser, logOut, update }}
         >
             {!isLoading ? children : "Loading..."}
         </AuthContext.Provider>

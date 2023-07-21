@@ -11,8 +11,7 @@ import { useProfessions } from "../../../hooks/useProfession";
 import { useAuth } from "../../../hooks/useAuth";
 
 const EditUserPage = () => {
-    const { currentUser, updateUser } = useAuth();
-    // const history = useHistory();
+    const { currentUser, update } = useAuth();
     const [isLoading, setIsLoading] = useState(false);
 
     const { professions } = useProfessions();
@@ -28,37 +27,14 @@ const EditUserPage = () => {
     }));
 
     const [errors, setErrors] = useState({});
-    const getProfessionById = (id) => {
-        for (const prof of professions) {
-            if (prof.value === id) {
-                return { _id: prof.value, name: prof.label };
-            }
-        }
-    };
-
-    const getQualities = (elements) => {
-        const qualitiesArray = [];
-        for (const elem of elements) {
-            for (const quality in qualities) {
-                if (elem.value === qualities[quality].value) {
-                    qualitiesArray.push({
-                        _id: qualities[quality].value,
-                        name: qualities[quality].label,
-                        color: qualities[quality].color
-                    });
-                }
-            }
-        }
-        return qualitiesArray;
-    };
 
     const transformData = (data) => {
         const qualitiesArray = [];
         for (const elem of data) {
-            const quality = getQuality(elem);
+            const newQuality = getQuality(elem);
             qualitiesArray.push({
-                label: quality.name,
-                value: quality._id
+                label: newQuality.name,
+                value: newQuality._id
             });
         }
         return qualitiesArray;
@@ -72,43 +48,20 @@ const EditUserPage = () => {
         e.preventDefault();
         const isValid = validate();
         if (!isValid) return;
-        const { profession, qualities } = data;
-        /*
-        api.users
-            .update(currentUser._id, {
-                ...data,
-                profession: getProfessionById(profession),
-                qualities: getQualities(qualities)
-            })
-            .then((data) => history.push(`/users/${data._id}`));
-            */
+        console.log("data", data);
+        const newData = {
+            ...data,
+            qualities: data.qualities.map((q) => q.value)
+        };
+        console.log("newData", newData);
         try {
-            await updateUser({
-                ...data,
-                profession: getProfessionById(profession),
-                qualities: getQualities(qualities)
-            });
+            await update(newData);
             history.push("/");
         } catch (error) {
             setErrors(error);
         }
-
-        console.log("updateUser", {
-            ...data,
-            profession: getProfessionById(profession),
-            qualities: getQualities(qualities)
-        });
     };
 
-    /*
-    useEffect(() => {
-        setIsLoading(true);
-        setData(() => ({
-            ...currentUser,
-            qualities: transformData(currentUser.qualities)
-        }));
-    }, []);
-*/
     useEffect(() => {
         if (data._id) setIsLoading(false);
     }, [data]);
@@ -173,7 +126,7 @@ const EditUserPage = () => {
                                 options={professionsList}
                                 name="profession"
                                 onChange={handleChange}
-                                value={data.profession}
+                                value={data.profession.name}
                                 error={errors.profession}
                             />
                             <RadioField
